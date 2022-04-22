@@ -6,11 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread"] }
-warp = "0.3.2" # Web Server
-mobc = "0.7.3" # Connection to db
-mobc-postgres = { version = "=0.7.0", features = ["with-chrono-0_4", "with-serde_json-1"] }
-serde = {version = "1.0.136", features = ["derive"] }
-serde_json = "=1.0.79"
-thiserror = "1.0.30"
-common = { version = "0.1.0", path = "../common" }
+diesel = { version = "1.4.4", features = ["postgres"] }
+dotenv = "0.15.0"
