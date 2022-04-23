@@ -8,15 +8,31 @@ mod db;
 mod schema;
 mod services;
 
+use actix_web::middleware::Logger;
 use actix_web::{App, HttpServer};
 use controllers::movies;
+use env_logger::fmt::Formatter;
+// use env_logger::Env;
+use log::{Level, LevelFilter, Record};
+use std::io::Write;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("\x1b[32m Server Starting 🕑\x1b[0m");
-    let server = HttpServer::new(|| App::new().configure(movies::router))
-        .bind(("127.0.0.1", 8080))?
-        .run();
+
+    env_logger::builder()
+        .format_timestamp(None)
+        .filter_level(LevelFilter::Info)
+        .format(|buf, record| logger_format(buf, record))
+        .init();
+
+    let server = HttpServer::new(|| {
+        App::new()
+            .wrap(Logger::new("%a \"%r\" (%T)"))
+            .configure(movies::router)
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run();
 
     print!("\x1B[2J\x1B[1;1H");
 
@@ -30,4 +46,27 @@ async fn main() -> std::io::Result<()> {
     println!("Server closing 🕑");
 
     Ok(())
+}
+
+fn logger_format(buf: &mut Formatter, record: &Record) -> Result<(), std::io::Error> {
+    let log_color = match record.level() {
+        Level::Info => "\x1b[34m",
+        Level::Error => "\x1b[31m",
+        Level::Warn => "\x1b[33m",
+        Level::Trace => "\x1b[32m",
+        Level::Debug => "\x1b[37m\x1b[5m",
+    };
+    let clean_format = "\x1b[0m";
+    let dim_format = "\x1b[2m";
+
+    writeln!(
+        buf,
+        "{}[{}]:{}{} {}{}",
+        log_color,
+        record.level(),
+        clean_format,
+        dim_format,
+        record.args(),
+        clean_format
+    )
 }

@@ -4,7 +4,6 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use diesel::result::Error;
 use serde::{Deserialize, Serialize};
-
 #[derive(Queryable, Serialize, Deserialize, Debug)]
 pub struct Movie {
     pub id: i32,
@@ -36,4 +35,30 @@ pub fn movie_create<'a>(
     diesel::insert_into(movies::table)
         .values(&new_movie)
         .get_result(conn)
+}
+
+#[derive(AsChangeset)]
+#[table_name = "movies"]
+struct MovieForm<'a> {
+    pub name: Option<&'a str>,
+    pub seen: Option<&'a bool>,
+    pub owner_id: Option<&'a i32>,
+}
+
+pub fn movie_update<'a>(
+    conn: &PgConnection,
+    id: &'a i32,
+    name: &'a str,
+    seen: &'a bool,
+    owner_id: &'a i32,
+) -> Result<Movie, Error> {
+    let movie_form = MovieForm {
+        name: Some(name),
+        seen: Some(seen),
+        owner_id: Some(owner_id),
+    };
+
+    diesel::update(movies::table.find(id))
+        .set(movie_form)
+        .get_result::<Movie>(conn)
 }
