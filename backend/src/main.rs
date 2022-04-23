@@ -1,55 +1,33 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
+extern crate serde;
 
+mod controllers;
 mod db;
 mod schema;
+mod services;
 
-use crate::db::establish_connection;
-use db::movie::{create_movie, Movie};
-use diesel::prelude::*;
-use std::io::stdin;
+use actix_web::{App, HttpServer};
+use controllers::movies;
 
-fn main() {
-    use schema::movies::dsl::*;
-    let connection = establish_connection();
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    println!("\x1b[32m Server Starting 🕑\x1b[0m");
+    let server = HttpServer::new(|| App::new().configure(movies::router))
+        .bind(("127.0.0.1", 8080))?
+        .run();
 
-    println!("Whats the name of the movie?");
-    let mut title = String::new();
-    stdin().read_line(&mut title).unwrap();
-    let title = &title[..(title.len() - 1)]; // Drop the newline character
+    print!("\x1B[2J\x1B[1;1H");
 
-    println!("Did you watch the movie? Y/N");
-    let mut seenstr = String::new();
-    stdin().read_line(&mut seenstr).unwrap();
-    let seenstr = &seenstr[..(seenstr.len() - 1)]; // Drop the newline character
-    let seenbool = match seenstr {
-        "Y" => true,
-        "N" => false,
-        _ => false,
-    };
+    println!(
+        "\x1b[32m Server running on port \x1b[1m\x1b[33m[{}] 🚀\x1b[0m",
+        8080
+    );
+    server.await?;
 
-    println!("Who is the owner?");
-    let mut owner = String::new();
-    stdin().read_line(&mut owner).unwrap();
-    let owner = &owner[..(owner.len() - 1)]; // Drop the newline character
-    let ownerid = match owner.parse::<i32>() {
-        Ok(n) => n,
-        Err(_) => 1,
-    };
+    print!("\x1B[2J\x1B[1;1H");
+    println!("Server closing 🕑");
 
-    let movie = create_movie(&connection, title, &seenbool, &ownerid);
-    println!("\nSaved draft {} with id {}", title, movie.id);
-    println!("==============================");
-
-    let results = movies
-        .load::<Movie>(&connection)
-        .expect("Error loading movies");
-
-    println!("Displaying {} movies", results.len());
-    println!("==========");
-    for movie in results {
-        println!("name: {} | seen: {}", movie.name, movie.seen);
-        println!("----------\n");
-    }
+    Ok(())
 }

@@ -1,0 +1,16 @@
+# List of Movies
+GET http://localhost:8080/movies HTTP/1.1
+content-type: application/json
+
+###
+
+# Create new movie
+POST http://localhost:8080/movies HTTP/1.1
+content-type: application/json
+
+{
+    "id": 0,
+    "owner_id": 1,
+    "name": "Venom",
+    "seen": false
+}

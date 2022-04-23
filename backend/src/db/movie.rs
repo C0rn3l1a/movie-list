@@ -2,8 +2,10 @@
 use crate::schema::movies;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+use diesel::result::Error;
+use serde::{Deserialize, Serialize};
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize, Debug)]
 pub struct Movie {
     pub id: i32,
     pub owner_id: i32,
@@ -19,12 +21,12 @@ pub struct NewMovie<'a> {
     pub owner_id: &'a i32,
 }
 
-pub fn create_movie<'a>(
+pub fn movie_create<'a>(
     conn: &PgConnection,
     name: &'a str,
     seen: &'a bool,
     owner_id: &'a i32,
-) -> Movie {
+) -> Result<Movie, Error> {
     let new_movie = NewMovie {
         name: name,
         seen: seen,
@@ -34,5 +36,4 @@ pub fn create_movie<'a>(
     diesel::insert_into(movies::table)
         .values(&new_movie)
         .get_result(conn)
-        .expect("Error saving new post")
 }
