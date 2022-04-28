@@ -7,12 +7,12 @@ pub struct MovieItemProps {
 }
 
 #[function_component(MovieItem)]
-pub fn accordion(MovieItemProps { movie }: &MovieItemProps) -> Html {
+pub fn movie_item(MovieItemProps { movie }: &MovieItemProps) -> Html {
+    let name = movie.name.clone();
+
     html! {
-        <div class="accordion">
-            <div class="accordion-head">
-                {movie.name}
-            </div>
+        <div class="movie-item">
+            {name}
         </div>
     }
 }
