@@ -1,0 +1,11 @@
+.accordion-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-radius: .25rem;
+    padding: .25rem;
+    
+    border: solid 1px gray;
+    background-color: hsl(40, 100%, 65%);
+}

@@ -62,3 +62,7 @@ pub fn movie_update<'a>(
         .set(movie_form)
         .get_result::<Movie>(conn)
 }
+
+pub fn movie_delete<'a>(conn: &PgConnection, id: &'a i32) -> Result<usize, Error> {
+    diesel::delete(movies::table.filter(movies::id.eq(id))).execute(conn)
+}

@@ -1,0 +1,16 @@
+.list-view {
+    
+    // layout
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    
+    // spacing
+    gap: 1rem;
+    padding: 1rem;
+    margin: auto;
+    
+    ul, li {
+        display: contents;
+    }
+}

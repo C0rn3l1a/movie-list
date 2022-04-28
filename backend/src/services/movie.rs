@@ -1,5 +1,5 @@
 use crate::db::establish_connection;
-use crate::db::movie::{movie_create, movie_update, Movie};
+use crate::db::movie::{movie_create, movie_delete, movie_update, Movie};
 use crate::schema::movies::dsl::movies;
 use diesel::prelude::*;
 
@@ -32,4 +32,19 @@ pub fn update_movie(
     };
 
     movie_update(&connection, id, name, seen, owner_id)
+}
+
+pub fn delete_movie(id: &i32) -> Result<(), diesel::result::Error> {
+    let connection = establish_connection();
+    let movie: Result<Movie, diesel::result::Error> = movies.find(id).first(&connection);
+
+    match movie {
+        Ok(_) => (),
+        Err(error) => return Err(error),
+    };
+
+    match movie_delete(&connection, id) {
+        Ok(_) => Ok(()),
+        Err(error) => return Err(error),
+    }
 }
