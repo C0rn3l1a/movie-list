@@ -6,6 +6,7 @@ use yew::prelude::*;
 
 // define components module
 mod components;
+mod services;
 
 // Bring ListView into scope
 use components::list_view::ListView;
