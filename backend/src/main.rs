@@ -8,6 +8,7 @@ mod db;
 mod schema;
 mod services;
 
+use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::{App, HttpServer};
 use controllers::movies;
@@ -27,11 +28,18 @@ async fn main() -> std::io::Result<()> {
         .init();
 
     let server = HttpServer::new(|| {
+        let cors = Cors::default()
+            .supports_credentials()
+            .allow_any_origin()
+            .allow_any_header()
+            .allow_any_method();
+
         App::new()
+            .wrap(cors)
             .wrap(Logger::new("%a \"%r\" (%T)"))
             .configure(movies::router)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("127.0.0.1", 3000))?
     .run();
 
     print!("\x1B[2J\x1B[1;1H");

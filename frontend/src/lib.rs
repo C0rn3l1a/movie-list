@@ -20,5 +20,6 @@ fn app() -> Html {
 
 #[wasm_bindgen]
 pub fn run_app() {
+    wasm_logger::init(wasm_logger::Config::default());
     yew::start_app::<Base>();
 }
