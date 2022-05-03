@@ -1,8 +1,8 @@
 use crate::services::movie::{get_movies, Error};
 
 use super::common::accordion::Accordion;
+use super::common::loading::Loading;
 use super::movie_item::MovieItem;
-use common::models::movie::Movie;
 use yew::{function_component, html, use_effect_with_deps, Html};
 use yew_hooks::use_async;
 
@@ -27,7 +27,7 @@ pub fn list_view() -> Html {
         // HANDLE LOADING
         {
           if get_movies.loading {
-            html!{"Loading"}
+            html!{<Loading message={"Loading Movies!"}/>}
           } else {
             html!{}
           }
